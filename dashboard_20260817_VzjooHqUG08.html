@@ -55,6 +55,12 @@
     0%,100% { filter:drop-shadow(0 0 3px rgba(180,120,255,.5)) brightness(.85); }
     50% { filter:drop-shadow(0 0 12px rgba(220,160,255,1)) drop-shadow(0 0 22px rgba(255,120,200,.7)) brightness(1.35); }
   }
+  .asof { margin-left:10px; font-size:12px; color:var(--muted);
+           border:1px solid var(--line); border-radius:10px; padding:2px 8px; }
+  #updbar { position:fixed; left:50%; transform:translateX(-50%); bottom:16px;
+             background:var(--gold); color:#241a00; font-weight:700; cursor:pointer;
+             padding:11px 18px; border-radius:999px; z-index:9999; font-size:14px;
+             box-shadow:0 6px 22px rgba(0,0,0,.5); }
   .tabsep { margin-top:34px; border-top:2px dashed var(--line); padding-top:18px; }
   .tabsep h1 { color:var(--gold); }
   table.hist td.hcell { text-align:center; padding:5px 4px; }
@@ -107,7 +113,7 @@
   <section class="panel active" data-sk="maruhan">
     
     <h1>ジャグラー設定マップ <span class="date">2026-08-17</span> <span class="badge" style="background:#bf8700">特日（7のつく日）</span></h1>
-    <div class="sub"><b>マルハン新宿東宝ビル店</b></div>
+    <div class="sub"><b>マルハン新宿東宝ビル店</b><span class="asof">データ取得 12:02 時点</span></div>
     <div class="gogo-line"></div>
     <div class="cards">
       <div class="c"><div class="lbl">対象台数</div><div class="v">170台</div></div>
@@ -1835,7 +1841,7 @@
   <section class="panel" data-sk="espass_kabuki">
     
     <h1>ジャグラー設定マップ <span class="date">2026-08-17</span> <span class="badge" style="background:#bf8700">特日（7のつく日）</span></h1>
-    <div class="sub"><b>エスパス日拓新宿歌舞伎町店</b></div>
+    <div class="sub"><b>エスパス日拓新宿歌舞伎町店</b><span class="asof">データ取得 13:01 時点</span></div>
     <div class="gogo-line"></div>
     <div class="cards">
       <div class="c"><div class="lbl">対象台数</div><div class="v">236台</div></div>
@@ -4144,7 +4150,7 @@
   <section class="panel" data-sk="espass_seibu">
     
     <h1>ジャグラー設定マップ <span class="date">2026-08-17</span> <span class="badge" style="background:#bf8700">特日（7のつく日）</span></h1>
-    <div class="sub"><b>エスパス日拓西武新宿駅前店</b></div>
+    <div class="sub"><b>エスパス日拓西武新宿駅前店</b><span class="asof">データ取得 12:06 時点</span></div>
     <div class="gogo-line"></div>
     <div class="cards">
       <div class="c"><div class="lbl">対象台数</div><div class="v">71台</div></div>
@@ -4956,4 +4962,29 @@ document.querySelectorAll('.tabbtn').forEach(function(b){
   });
 });
 </script>
+
+<script>
+(function () {
+  var url = location.pathname, seen = null;
+  function banner() {
+    if (document.getElementById('updbar')) return;
+    var b = document.createElement('div');
+    b.id = 'updbar';
+    b.textContent = '🔄 新しいデータに更新されました — タップで表示';
+    b.onclick = function () { location.replace(url + '?t=' + Date.now()); };
+    document.body.appendChild(b);
+  }
+  function check() {
+    fetch(url, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+      var tag = r.headers.get('ETag') || r.headers.get('Last-Modified');
+      if (!tag) return;
+      if (seen === null) { seen = tag; return; }
+      if (tag !== seen) banner();
+    }).catch(function () {});
+  }
+  check();
+  setInterval(check, 120000);
+})();
+</script>
+
 </body></html>
